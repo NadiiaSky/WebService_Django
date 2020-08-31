@@ -1,0 +1,29 @@
+{% load static %}
+{% load tz %}
+
+<html lang="ua">
+<head>
+    <link rel="stylesheet" type="text/css" href="{% static 'main.css' %}"/>
+    <title>Messages system</title>
+</head>
+{% timezone "Europe/Kiev" %}
+<body>
+    <div class="header">
+      <a href="{% url 'messages:index'  %}" class="logo">Messages System</a>
+      <div class="header-right">
+        {% if user.is_authenticated %}
+            <span>Hello, {{ user.username }}</span>
+            <span>|</span>
+            <a href="{% url 'logout' %}">Logout</a>
+        {% else %}
+            <a href="{% url 'login' %}">Login</a>
+            <a href="{% url 'messages:signup' %}">Sign up</a>
+        {% endif %}
+      </div>
+    </div>
+    {% block content %}
+    {% endblock %}
+{% endtimezone %}
+</body>
+
+</html>

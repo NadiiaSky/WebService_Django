@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <br><small>
+        Published at: {{ message.pub_date }}
+        Author: {{ message.user.username }}
+    </small>
+    <p>{{ message.text }}</p>
+    {% if message.image %}<img src="/media/{{ message.image }}" alt="Image">{% endif %}
+{% endblock %}
