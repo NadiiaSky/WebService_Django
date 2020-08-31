@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>List of Messages</h1>
+
+    {% if message %}
+        <p><strong>{{ message }}</strong></p>
+    {% endif %}
+
+    {% if order_by == "-pub_date" %}
+        <a
+                class="button"
+                href="/messages/?order=pub_date&last_24_hours=
+{% if last_24_hours%}true{% else %}false{% endif %}
+{% if selected_user %}&user_id={{selected_user}}{% endif %}"
+        >
+            Order by pub date
+        </a>
+    {% else %}
+        <a
+                class="button"
+                href="/messages/?order=-pub_date&last_24_hours=
+{% if last_24_hours%}true{% else %}false{% endif %}
+{% if selected_user %}&user_id={{selected_user}}{% endif %}"
+        >
+            Order by
+            pub date
+            desc
+        </a>
+    {% endif %}
+
+    {% if last_24_hours %}
+        <a class="filter" href="/messages/">Clear filter</a>
+    {% else %}
+        <a
+                class="filter"
+                href="/messages/?last_24_hours=true&?order_by={{order_by}}
+{% if selected_user %}&user_id={{selected_user}}{% endif %}"
+        >
+            Messages
+            published in
+            last 24
+            hours
+        </a>
+    {% endif %}
+    <select class="filter" name="user-filter" id="user-filter"
+            onchange="document.location=document.location.origin+document.location.pathname+'?user_id='+this
+            .options[this.selectedIndex].value">
+        <option value="" {% if selected_user is None %}selected{% endif %}>User not selected</option>
+        {% for user in users %}
+            <option value="{{ user.id }}" {% if selected_user == user.id|slugify %}selected{% endif %}>
+                {{ user.username }}
+            </option>
+        {% endfor %}
+    </select>
+
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <br><button class="publish" type="submit">Publish</button>
+    </form>
+
+    {% if latest_messages %}
+        <ul>
+            {% for messages in latest_messages %}
+                <li>
+                    <a href="/messages/{{ messages.id }}/">
+                        {{ messages.text }} <small>{{ messages.pub_date }} | {{ messages.user.username }}</small>
+                    </a>
+                </li>
+                {% if messages.image %}
+                    <img src="/media/{{messages.image}}" alt="Image">
+                {% endif %}
+            {% endfor %}
+        </ul>
+
+    {% else %}
+        <p>You have no available messages</p>
+    {% endif %}
+{% endblock %}
+
+
